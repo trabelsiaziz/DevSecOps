@@ -1,0 +1,11 @@
+spring:
+  application:
+    name: devsecops_demo
+
+external:
+  boycott:
+    base-url: "https://api.boycottisraeli.biz/v1/search"
+
+
+server:
+  port: 8080

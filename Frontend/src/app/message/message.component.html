@@ -1,0 +1,99 @@
+<div
+  class="flex mb-4"
+  [ngClass]="{ 'justify-end': message.isOwn, 'justify-start': !message.isOwn }"
+>
+  <!-- Avatar for other users -->
+  <div *ngIf="!message.isOwn" class="shrink-0 mr-3">
+    <div
+      class="w-10 h-10 rounded-full bg-linear-to-br from-purple-400 to-pink-500 flex items-center justify-center text-white font-semibold"
+    >
+      {{ message.sender.charAt(0).toUpperCase() }}
+    </div>
+  </div>
+
+  <!-- Message Content -->
+  <div class="flex flex-col max-w-xs md:max-w-md lg:max-w-lg">
+    <!-- Sender Name (only for other users) -->
+    <span *ngIf="!message.isOwn" class="text-xs text-gray-600 mb-1 ml-1">
+      {{ message.sender }}
+    </span>
+
+    <!-- Message Bubble -->
+    <div
+      class="px-4 py-2 rounded-2xl shadow-sm border-2"
+      [ngClass]="{
+        'bg-blue-600 text-white rounded-br-sm border-blue-600': message.isOwn,
+        'bg-gray-100 text-gray-800 rounded-bl-sm border-green-500':
+          !message.isOwn && message.responseCode !== 200 && message.responseCode !== undefined,
+        'bg-gray-100 text-gray-800 rounded-bl-sm border-red-500':
+          !message.isOwn && message.responseCode === 200,
+        'bg-gray-200 text-gray-800 rounded-bl-sm border-gray-300':
+          !message.isOwn && message.responseCode === undefined
+      }"
+    >
+      <!-- Status Icon for bot messages with response codes -->
+      <div
+        *ngIf="!message.isOwn && message.responseCode !== undefined"
+        class="flex items-center gap-2 mb-2 pb-2 border-b"
+        [ngClass]="{
+          'border-green-500/30': message.responseCode !== 200,
+          'border-red-500/30': message.responseCode === 200
+        }"
+      >
+        <svg
+          *ngIf="message.responseCode !== 200"
+          class="w-5 h-5 text-green-600"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <svg
+          *ngIf="message.responseCode === 200"
+          class="w-5 h-5 text-red-600"
+          fill="currentColor"
+          viewBox="0 0 20 20"
+        >
+          <path
+            fill-rule="evenodd"
+            d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+            clip-rule="evenodd"
+          />
+        </svg>
+        <span
+          class="text-xs font-semibold"
+          [ngClass]="{
+            'text-green-700': message.responseCode !== 200,
+            'text-red-700': message.responseCode === 200
+          }"
+        >
+          {{ message.responseCode !== 200 ? 'Safe to Use' : 'Boycotted' }}
+        </span>
+      </div>
+      <p class="text-sm wrap-break-word" [class.whitespace-pre-line]="!message.isOwn">
+        {{ message.text }}
+      </p>
+    </div>
+
+    <!-- Timestamp -->
+    <span
+      class="text-xs text-gray-500 mt-1"
+      [ngClass]="{ 'text-right': message.isOwn, 'text-left': !message.isOwn }"
+    >
+      {{ message.timestamp | date : 'short' }}
+    </span>
+  </div>
+
+  <!-- Avatar for own messages -->
+  <div *ngIf="message.isOwn" class="shrink-0 ml-3">
+    <div
+      class="w-10 h-10 rounded-full bg-linear-to-br from-blue-400 to-blue-600 flex items-center justify-center text-white font-semibold"
+    >
+      {{ message.sender.charAt(0).toUpperCase() }}
+    </div>
+  </div>
+</div>

@@ -1,0 +1,87 @@
+# Ignore git directories
+Frontend/.git
+Backend/.git
+
+# IDEs and editors
+.idea/
+.project
+.classpath
+.c9/
+*.launch
+.settings/
+*.sublime-workspace
+
+# Visual Studio Code
+Frontend/.vscode
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
+!.vscode/extensions.json
+.history/*
+
+# Frontend - Miscellaneous
+Frontend/.angular/
+Frontend/.sass-cache/
+Frontend/connect.lock
+Frontend/coverage/
+Frontend/libpeerconnection.log
+Frontend/testem.log
+Frontend/typings/
+Frontend/__screenshots__/
+
+# Frontend - Dependencies
+Frontend/node_modules/
+Frontend/npm-debug.log
+Frontend/yarn-error.log
+
+# Frontend - Build outputs
+Frontend/dist/
+Frontend/out/
+Frontend/.angular/cache
+
+# System files
+.DS_Store
+Thumbs.db
+
+# Backend - Maven
+Backend/HELP.md
+Backend/target/
+Backend/.mvn/wrapper/maven-wrapper.jar
+!Backend/**/src/main/**/target/
+!Backend/**/src/test/**/target/
+
+# Backend - STS
+Backend/.apt_generated
+Backend/.classpath
+Backend/.factorypath
+Backend/.project
+Backend/.settings
+Backend/.springBeans
+Backend/.sts4-cache
+
+# Backend - IntelliJ IDEA
+Backend/.idea
+Backend/*.iws
+Backend/*.iml
+Backend/*.ipr
+
+# Backend - NetBeans
+Backend/nbproject/private/
+Backend/nbbuild/
+Backend/dist/
+Backend/nbdist/
+Backend/.nb-gradle/
+Backend/build/
+!Backend/**/src/main/**/build/
+!Backend/**/src/test/**/build/
+
+# Backend - VS Code
+Backend/.vscode/
+
+# Docker
+.dockerignore
+docker-compose.override.yml
+
+# Logs
+*.log
+logs/
