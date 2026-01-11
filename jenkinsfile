@@ -1,0 +1,100 @@
+pipeline {
+    agent any
+
+    tools {
+        maven 'M2_HOME'
+    }
+
+    environment {
+        BACKEND_IMAGE = "trabelsiaziz/devsecops-backend"
+        FRONTEND_IMAGE = "trabelsiaziz/devsecops-frontend"
+    }
+
+    stages {
+
+        stage('Checkout code') {
+            steps {
+                git branch: 'main',
+                    url: 'https://github.com/trabelsiaziz/DevSecOps.git'
+            }
+        }
+
+        stage('Build Docker Images') {
+            steps {
+                sh '''
+                docker build -t devsecops-backend:${BUILD_NUMBER} Backend/
+                docker build -t devsecops-frontend:${BUILD_NUMBER} Frontend/
+
+                docker tag devsecops-backend:${BUILD_NUMBER} ${BACKEND_IMAGE}:${BUILD_NUMBER}
+                docker tag devsecops-frontend:${BUILD_NUMBER} ${FRONTEND_IMAGE}:${BUILD_NUMBER}
+                '''
+            }
+        }
+
+
+        stage('Trivy Image Scan') {
+            steps {
+
+                echo "🔍 Scanning backend image for vulnerabilities..."
+
+                sh '''
+                docker run --rm \
+                -v /var/run/docker.sock:/var/run/docker.sock \
+                -v trivy-cache:/root/.cache \
+                aquasec/trivy:latest \
+                image --scanners vuln \
+                --skip-java-db-update \
+                --severity HIGH,CRITICAL \
+                --exit-code 1 \
+                ${BACKEND_IMAGE}:${BUILD_NUMBER}
+                '''
+
+                echo "🔍 Scanning frontend image for vulnerabilities..."
+
+                sh '''
+                docker run --rm \
+                -v /var/run/docker.sock:/var/run/docker.sock \
+                -v trivy-cache:/root/.cache \
+                aquasec/trivy:latest \
+                image --scanners vuln \
+                --severity HIGH,CRITICAL \
+                --exit-code 1 \
+                ${FRONTEND_IMAGE}:${BUILD_NUMBER}
+                '''
+            }
+        }
+
+
+        
+        stage('Push Docker Images') {
+            steps {
+                withCredentials([string(credentialsId: 'dockerhub-pwd', variable: 'dockerhubpwd')]) {
+                    sh 'docker login -u trabelsiaziz -p ${dockerhubpwd}'
+                }
+
+                sh '''
+                docker push ${BACKEND_IMAGE}:${BUILD_NUMBER}
+                docker push ${FRONTEND_IMAGE}:${BUILD_NUMBER}
+                '''
+            }
+        }
+
+        stage('Deploy with Docker Compose') {
+            environment {
+                TAG = "${BUILD_NUMBER}"
+            }
+            steps {
+                sh 'docker compose up -d'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo "✅ DevSecOps pipeline completed successfully"
+        }
+        failure {
+            echo "❌ Pipeline failed – check build or security logs"
+        }
+    }
+}

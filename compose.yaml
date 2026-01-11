@@ -1,18 +1,10 @@
 services:
-  frontend:
-    build:
-      context: ./Frontend
-      dockerfile: Dockerfile
-    container_name: frontend
-    ports:
-      - "4200:4200"
-    restart: unless-stopped
-
   backend:
-    build:
-      context: ./Backend
-      dockerfile: Dockerfile
-    container_name: backend
+    image: trabelsiaziz/DevSecops-Backend:${TAG}
     ports:
       - "8080:8080"
-    restart: unless-stopped
+
+  frontend:
+    image: trabelsiaziz/DevSecops-Frontend:${TAG}
+    ports:
+      - "4200:4200"
